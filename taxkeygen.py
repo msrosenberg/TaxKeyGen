@@ -1,5 +1,5 @@
 
-from typing import Optional
+from typing import Optional, Tuple
 
 
 class Taxon:
@@ -50,6 +50,7 @@ class VariantDist:
         self.variants = set()
         self.vfreq = {}
         self.pattern = ""
+        self.cluster = None
 
     def __len__(self):
         return len(self.variants)
@@ -68,6 +69,43 @@ class VariantDist:
             self.vfreq[variant] += 1
         else:
             self.vfreq[variant] = 1
+
+    def add_to_cluster(self, cluster):
+        cluster.append(self)
+        self.cluster = cluster
+
+    def freq_ratio(self) -> float:
+        c0 = self.pattern.count("0")
+        c1 = self.pattern.count("1")
+        n = c0 + c1
+        return min(c0/n, c1/n)
+
+    def __lt__(self, other):
+        if self.trait.priority < other.trait.priority:
+            return True
+        elif self.trait.priority > other.trait.priority:
+            return False
+        elif self.freq_ratio() < other.freq_ratio():
+            return True
+        elif self.freq_ratio() > other.freq_ratio():
+            return False
+        elif len(self.cluster) < len(other.cluster):
+            return True
+        else:
+            return False
+
+
+class KeyNode:
+    def __init__(self):
+        self.parent = None
+        self.children = []
+        self.traits = []
+
+    def new_child_node(self):
+        child = KeyNode()
+        self.children.append(child)
+        child.parent = self
+        return child
 
 
 def sorted_taxa_keys(tax_dict: dict) -> list:
@@ -182,14 +220,45 @@ def cluster_traits(var_freqs: list) -> list:
         for c in clusters:
             cpattern = c[0].pattern
             if (cpattern == vf.pattern) or (cpattern == reverse_pattern(vf.pattern)):
-                c.append(vf)
+                vf.add_to_cluster(c)
                 match = True
         if not match:
-            clusters.append([vf])
+            c = []
+            clusters.append(c)
+            vf.add_to_cluster(c)
     return clusters
 
 
-def create_key_tree(taxa_data: dict, trait_data: dict):
+def split_taxa(taxa_data: dict, key_vf: VariantDist) -> Tuple[list, list]:
+    """
+    split taxa into two groups based on the key variant
+    """
+    taxa0 = []
+    taxa1 = []
+    variants = sorted(key_vf.variants)
+    for tk in sorted_taxa_keys(taxa_data):
+        taxon = taxa_data[tk]
+        tv = taxon.find_variant(key_vf.trait)
+        i = variants.index(tv)
+        if i == 0:
+            taxa0.append(taxon)
+        else:
+            taxa1.append(taxon)
+    return taxa0, taxa1
+
+
+def trait_list(cluster: list) -> list:
+    tlist = []
+    for vf in cluster:
+        tlist.append(vf.trait)
+    return tlist
+
+
+def match_variants(trait_list: list, taxon: Taxon):
+    return [taxon.find_variant(t) for t in trait_list]
+
+
+def create_key_tree(taxa_data: dict, trait_data: dict, node: KeyNode):
     var_freqs = determine_variant_freqs(taxa_data, trait_data)
     var_freqs = filter_var_freqs(var_freqs)
     determine_var_pattern(var_freqs, taxa_data)
@@ -199,6 +268,20 @@ def create_key_tree(taxa_data: dict, trait_data: dict):
     #     for cc in c:
     #         print(cc)
     #     print()
+    var_freqs.sort()
+    key_vf = var_freqs[0]
+    taxa0, taxa1 = split_taxa(taxa_data, key_vf)
+    node.traits = trait_list(key_vf.cluster)  # assign all traits which align with this split to node
+    child0variants = match_variants(node.traits, taxa0[0])
+    child1variants = match_variants(node.traits, taxa1[0])
+    if len(taxa0) > 1:
+        pass
+    else:
+        node.children.append(taxa0[0])
+    if len(taxa1) > 1:
+        pass
+    else:
+        node.children.append(taxa1[0])
 
 
 def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[str], verbose: bool = True) -> list:
@@ -210,7 +293,8 @@ def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[s
     if verbose:
         print("Read {} taxa from {}".format(len(taxa_data), taxa_name))
     match_traits_to_taxa(trait_data, taxa_data)
-    key_tree = create_key_tree(taxa_data, trait_data)
+    key_tree = KeyNode()
+    create_key_tree(taxa_data, trait_data, key_tree)
     output = []
     if out_name is not None:
         with open(out_name, "w") as outfile:
