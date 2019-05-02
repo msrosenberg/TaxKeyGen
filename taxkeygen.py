@@ -7,6 +7,13 @@ class Taxon:
         self.name = ""
         self.characters = []
 
+    def find_variant(self, trait):
+        t = None
+        for c in self.characters:
+            if trait == c.trait:
+                t = c
+        return t
+
 
 class TraitVariant:
     def __init__(self):
@@ -14,6 +21,12 @@ class TraitVariant:
         self.id = 0
         self.description = ""
         self.figures = []
+
+    def __lt__(self, other):
+        if self.id < other.id:
+            return True
+        else:
+            return False
 
 
 class Trait:
@@ -29,6 +42,28 @@ class Trait:
     def add_variant(self, variant: TraitVariant) -> None:
         self.variants[variant.id] = variant
         variant.trait = self
+
+
+class VariantDist:
+    def __init__(self):
+        self.trait = None
+        self.variants = set()
+        self.vfreq = {}
+        self.pattern = ""
+
+    def __len__(self):
+        return len(self.variants)
+
+    def add_variant(self, variant):
+        self.variants.add(variant)
+        if variant in self.vfreq:
+            self.vfreq[variant] += 1
+        else:
+            self.vfreq[variant] = 1
+
+
+def sorted_taxa_keys(tax_dict: dict) -> list:
+    return sorted(tax_dict.keys())
 
 
 def read_taxa_data(inname: str) -> dict:
@@ -78,6 +113,55 @@ def match_traits_to_taxa(trait_data: dict, taxa_data: dict) -> None:
             taxon.characters[i] = trait.variants[c]
 
 
+def determine_variant_freqs(taxa_data: dict, trait_data: dict) -> list:
+    """
+    determine which variants are present in the taxa for each trait and determine the frequency
+    of each as well
+    """
+    var_freqs = []
+    for t_key in trait_data:
+        trait = trait_data[t_key]
+        var_dist = VariantDist()
+        var_dist.trait = trait
+        for tax_key in sorted_taxa_keys(taxa_data):
+            taxon = taxa_data[tax_key]
+            tax_var = taxon.find_variant(trait)
+            var_dist.add_variant(tax_var)
+        var_freqs.append(var_dist)
+    return var_freqs
+
+
+def filter_var_freqs(var_freqs: list) -> list:
+    """
+    filter out traits without exactly two variants
+    """
+    new_freqs = []
+    for vf in var_freqs:
+        if len(vf) == 2:
+            new_freqs.append(vf)
+    return new_freqs
+
+
+def determine_var_pattern(var_freqs: list, taxa_data: dict) -> None:
+    """
+    determine the pattern of variants across taxa
+
+    at this stage only binary traits are examined, so the patten is stored as a string of 0's and 1's
+    """
+    for vf in var_freqs:
+        variants = sorted(vf.variants)
+        for tk in sorted_taxa_keys(taxa_data):
+            taxon = taxa_data[tk]
+            tv = taxon.find_variant(vf.trait)
+            vf.pattern += str(variants.index(tv))
+
+
+def create_key_tree(taxa_data: dict, trait_data: dict):
+    var_freqs = determine_variant_freqs(taxa_data, trait_data)
+    var_freqs = filter_var_freqs(var_freqs)
+    determine_var_pattern(var_freqs, taxa_data)
+
+
 def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[str], verbose: bool = True) -> list:
     trait_data = read_trait_data(trait_name)
     if verbose:
@@ -87,6 +171,7 @@ def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[s
     if verbose:
         print("Read {} taxa from {}".format(len(taxa_data), taxa_name))
     match_traits_to_taxa(trait_data, taxa_data)
+    key_tree = create_key_tree(taxa_data, trait_data)
     output = []
     if out_name is not None:
         with open(out_name, "w") as outfile:
