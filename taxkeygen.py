@@ -54,6 +54,14 @@ class VariantDist:
     def __len__(self):
         return len(self.variants)
 
+    def __repr__(self):
+        freqs = []
+        for v in self.vfreq:
+            freqs.append("{}: {}".format(v.description, self.vfreq[v]))
+        return "Variant Distribution of Trait: {}\n\tFreqs: {}\n\rPattern: {}".format(self.trait.title,
+                                                                                      ", ".join(freqs),
+                                                                                      self.pattern)
+
     def add_variant(self, variant):
         self.variants.add(variant)
         if variant in self.vfreq:
@@ -156,10 +164,41 @@ def determine_var_pattern(var_freqs: list, taxa_data: dict) -> None:
             vf.pattern += str(variants.index(tv))
 
 
+def reverse_pattern(x: str) -> str:
+    """
+    returns the inverse of a binary string
+
+    thus 00011100 -> 11100011
+    """
+    x.replace("0", "a")
+    x.replace("1", "0")
+    return x.replace("a", "1")
+
+
+def cluster_traits(var_freqs: list) -> list:
+    clusters = [[var_freqs[0]]]  # seed with first variant
+    for vf in var_freqs[1:]:
+        match = False
+        for c in clusters:
+            cpattern = c[0].pattern
+            if (cpattern == vf.pattern) or (cpattern == reverse_pattern(vf.pattern)):
+                c.append(vf)
+                match = True
+        if not match:
+            clusters.append([vf])
+    return clusters
+
+
 def create_key_tree(taxa_data: dict, trait_data: dict):
     var_freqs = determine_variant_freqs(taxa_data, trait_data)
     var_freqs = filter_var_freqs(var_freqs)
     determine_var_pattern(var_freqs, taxa_data)
+    trait_clusters = cluster_traits(var_freqs)
+    # for i, c in enumerate(trait_clusters):
+    #     print("Cluster", i)
+    #     for cc in c:
+    #         print(cc)
+    #     print()
 
 
 def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[str], verbose: bool = True) -> list:
