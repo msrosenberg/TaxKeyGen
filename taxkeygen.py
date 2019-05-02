@@ -1,5 +1,5 @@
 
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 
 class Taxon:
@@ -27,6 +27,9 @@ class TraitVariant:
             return True
         else:
             return False
+
+    def __str__(self):
+        return self.description
 
 
 class Trait:
@@ -104,6 +107,7 @@ class KeyNode:
         self.child0variants = []
         self.child1variants = []
         self.traits = []
+        self.number = 0
 
     def new_child_node(self, c):
         child = KeyNode()
@@ -292,10 +296,58 @@ def create_key_tree(taxa_data: dict, trait_data: dict, node: KeyNode):
     else:
         node.child0 = taxa0[0]
     if len(taxa1) > 1:
-        new_node = node.new_child_node(0)
+        new_node = node.new_child_node(1)
         create_key_tree({t.name: t for t in taxa1}, trait_data, new_node)
     else:
         node.child1 = taxa1[0]
+
+
+def number_nodes(tree: KeyNode, node_number: int) -> int:
+    """
+    number the tree nodes
+
+    this is used for the numbering rules in the key, 'if xxxxx, go to NUMBER'
+    """
+    tree.number = node_number
+    if isinstance(tree.child0, KeyNode):
+        node_number = number_nodes(tree.child0, node_number+1)
+    if isinstance(tree.child1, KeyNode):
+        node_number = number_nodes(tree.child1, node_number+1)
+    return node_number + 1
+
+
+def start_output() -> list:
+    output = []
+    output.append("<html>\n")
+    output.append("  <head>\n")
+    output.append("  </head>\n")
+    output.append("  <body>\n")
+    return output
+
+
+def end_output(output: list) -> None:
+    output.append("  </body>\n")
+    output.append("</html>\n")
+
+
+def write_key(tree: KeyNode, output: list) -> None:
+    def fork_str(letter: str, variants: list, tip: Union[KeyNode, Taxon]):
+        var_strs = [str(v) for v in variants]
+        outstr = "    <p>{}. ".format(letter) + "; ".join(var_strs) + ". &mdash; "
+        if isinstance(tip, KeyNode):
+            outstr += "Go to {}".format(tip.number)
+        else:
+            outstr += tip.name
+        return outstr + "</p>\n"
+
+    output.append("    <p>{}.</p>\n".format(tree.number))
+    output.append(fork_str("a", tree.child0variants, tree.child0))
+    output.append(fork_str("b", tree.child1variants, tree.child1))
+    output.append("    <p></p>\n")
+    if isinstance(tree.child0, KeyNode):
+        write_key(tree.child0, output)
+    if isinstance(tree.child1, KeyNode):
+        write_key(tree.child1, output)
 
 
 def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[str], verbose: bool = True) -> list:
@@ -309,10 +361,17 @@ def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[s
     match_traits_to_taxa(trait_data, taxa_data)
     key_tree = KeyNode()
     create_key_tree(taxa_data, trait_data, key_tree)
-    output = []
+    number_nodes(key_tree, 1)
+    output = start_output()
+    write_key(key_tree, output)
+    end_output(output)
     if out_name is not None:
         with open(out_name, "w") as outfile:
             outfile.writelines(output)
+        if verbose:
+            print("Key written to {}".format(out_name))
+    if verbose:
+        print("Finished")
     return output
 
 
