@@ -98,12 +98,20 @@ class VariantDist:
 class KeyNode:
     def __init__(self):
         self.parent = None
-        self.children = []
+        # self.children = []
+        self.child0 = None
+        self.child1 = None
+        self.child0variants = []
+        self.child1variants = []
         self.traits = []
 
-    def new_child_node(self):
+    def new_child_node(self, c):
         child = KeyNode()
-        self.children.append(child)
+        if c == 0:
+            self.child0 = child
+        else:
+            self.child1 = child
+        # self.children.append(child)
         child.parent = self
         return child
 
@@ -214,7 +222,11 @@ def reverse_pattern(x: str) -> str:
 
 
 def cluster_traits(var_freqs: list) -> list:
-    clusters = [[var_freqs[0]]]  # seed with first variant
+    # seed with first variant
+    vf = var_freqs[0]
+    c = []
+    vf.add_to_cluster(c)
+    clusters = [c]
     for vf in var_freqs[1:]:
         match = False
         for c in clusters:
@@ -272,16 +284,18 @@ def create_key_tree(taxa_data: dict, trait_data: dict, node: KeyNode):
     key_vf = var_freqs[0]
     taxa0, taxa1 = split_taxa(taxa_data, key_vf)
     node.traits = trait_list(key_vf.cluster)  # assign all traits which align with this split to node
-    child0variants = match_variants(node.traits, taxa0[0])
-    child1variants = match_variants(node.traits, taxa1[0])
+    node.child0variants = match_variants(node.traits, taxa0[0])
+    node.child1variants = match_variants(node.traits, taxa1[0])
     if len(taxa0) > 1:
-        pass
+        new_node = node.new_child_node(0)
+        create_key_tree({t.name: t for t in taxa0}, trait_data, new_node)
     else:
-        node.children.append(taxa0[0])
+        node.child0 = taxa0[0]
     if len(taxa1) > 1:
-        pass
+        new_node = node.new_child_node(0)
+        create_key_tree({t.name: t for t in taxa1}, trait_data, new_node)
     else:
-        node.children.append(taxa1[0])
+        node.child1 = taxa1[0]
 
 
 def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[str], verbose: bool = True) -> list:

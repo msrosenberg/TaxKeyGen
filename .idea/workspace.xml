@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/taxkeygen.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="586">
-              <caret line="258" selection-start-line="258" selection-end-line="258" />
+            <state relative-caret-position="384">
+              <caret line="282" selection-start-line="277" selection-end-line="282" />
             </state>
           </provider>
         </entry>
@@ -133,7 +133,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24940899" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -158,8 +157,8 @@
     <entry file="file://$PROJECT_DIR$/test_code.py" />
     <entry file="file://$PROJECT_DIR$/taxkeygen.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="258" selection-start-line="258" selection-end-line="258" />
+        <state relative-caret-position="384">
+          <caret line="282" selection-start-line="277" selection-end-line="282" />
         </state>
       </provider>
     </entry>
