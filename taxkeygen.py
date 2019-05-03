@@ -220,8 +220,8 @@ def reverse_pattern(x: str) -> str:
 
     thus 00011100 -> 11100011
     """
-    x.replace("0", "a")
-    x.replace("1", "0")
+    x = x.replace("0", "a")
+    x = x.replace("1", "0")
     return x.replace("a", "1")
 
 
