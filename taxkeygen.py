@@ -279,7 +279,7 @@ def create_key_tree(taxa_data: dict, trait_data: dict, node: KeyNode):
     var_freqs = filter_var_freqs(var_freqs)
     determine_var_pattern(var_freqs, taxa_data)
     cluster_traits(var_freqs)
-    var_freqs.sort()
+    var_freqs.sort(reverse=True)
     key_vf = var_freqs[0]
     taxa0, taxa1 = split_taxa(taxa_data, key_vf)
     node.traits = trait_list(key_vf.cluster)  # assign all traits which align with this split to node
