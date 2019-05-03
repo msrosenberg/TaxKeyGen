@@ -270,20 +270,15 @@ def trait_list(cluster: list) -> list:
     return tlist
 
 
-def match_variants(trait_list: list, taxon: Taxon):
-    return [taxon.find_variant(t) for t in trait_list]
+def match_variants(t_list: list, taxon: Taxon):
+    return [taxon.find_variant(t) for t in t_list]
 
 
 def create_key_tree(taxa_data: dict, trait_data: dict, node: KeyNode):
     var_freqs = determine_variant_freqs(taxa_data, trait_data)
     var_freqs = filter_var_freqs(var_freqs)
     determine_var_pattern(var_freqs, taxa_data)
-    trait_clusters = cluster_traits(var_freqs)
-    # for i, c in enumerate(trait_clusters):
-    #     print("Cluster", i)
-    #     for cc in c:
-    #         print(cc)
-    #     print()
+    cluster_traits(var_freqs)
     var_freqs.sort()
     key_vf = var_freqs[0]
     taxa0, taxa1 = split_taxa(taxa_data, key_vf)
@@ -316,13 +311,11 @@ def number_nodes(tree: KeyNode, node_number: int) -> int:
     return node_number + 1
 
 
-def start_output() -> list:
-    output = []
+def start_output(output: list) -> None:
     output.append("<html>\n")
     output.append("  <head>\n")
     output.append("  </head>\n")
     output.append("  <body>\n")
-    return output
 
 
 def end_output(output: list) -> None:
@@ -343,7 +336,7 @@ def write_key(tree: KeyNode, output: list) -> None:
     output.append("    <p>{}.</p>\n".format(tree.number))
     output.append(fork_str("a", tree.child0variants, tree.child0))
     output.append(fork_str("b", tree.child1variants, tree.child1))
-    output.append("    <p></p>\n")
+    output.append("    <p>&nbsp;</p>\n")
     if isinstance(tree.child0, KeyNode):
         write_key(tree.child0, output)
     if isinstance(tree.child1, KeyNode):
@@ -362,7 +355,8 @@ def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[s
     key_tree = KeyNode()
     create_key_tree(taxa_data, trait_data, key_tree)
     number_nodes(key_tree, 1)
-    output = start_output()
+    output = []
+    start_output(output)
     write_key(key_tree, output)
     end_output(output)
     if out_name is not None:
