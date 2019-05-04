@@ -275,26 +275,35 @@ def match_variants(t_list: list, taxon: Taxon):
 
 
 def create_key_tree(taxa_data: dict, trait_data: dict, node: KeyNode):
+    """
+    primary key tree creation function
+    """
     var_freqs = determine_variant_freqs(taxa_data, trait_data)
     var_freqs = filter_var_freqs(var_freqs)
-    determine_var_pattern(var_freqs, taxa_data)
-    cluster_traits(var_freqs)
-    var_freqs.sort(reverse=True)
-    key_vf = var_freqs[0]
-    taxa0, taxa1 = split_taxa(taxa_data, key_vf)
-    node.traits = trait_list(key_vf.cluster)  # assign all traits which align with this split to node
-    node.child0variants = match_variants(node.traits, taxa0[0])
-    node.child1variants = match_variants(node.traits, taxa1[0])
-    if len(taxa0) > 1:
-        new_node = node.new_child_node(0)
-        create_key_tree({t.name: t for t in taxa0}, trait_data, new_node)
-    else:
-        node.child0 = taxa0[0]
-    if len(taxa1) > 1:
-        new_node = node.new_child_node(1)
-        create_key_tree({t.name: t for t in taxa1}, trait_data, new_node)
-    else:
-        node.child1 = taxa1[0]
+    if len(var_freqs) > 0:
+        determine_var_pattern(var_freqs, taxa_data)
+        cluster_traits(var_freqs)
+        var_freqs.sort(reverse=True)
+        key_vf = var_freqs[0]
+        taxa0, taxa1 = split_taxa(taxa_data, key_vf)
+        node.traits = trait_list(key_vf.cluster)  # assign all traits which align with this split to node
+        node.child0variants = match_variants(node.traits, taxa0[0])
+        node.child1variants = match_variants(node.traits, taxa1[0])
+        if len(taxa0) > 1:
+            new_node = node.new_child_node(0)
+            create_key_tree({t.name: t for t in taxa0}, trait_data, new_node)
+        else:
+            node.child0 = taxa0[0]
+        if len(taxa1) > 1:
+            new_node = node.new_child_node(1)
+            create_key_tree({t.name: t for t in taxa1}, trait_data, new_node)
+        else:
+            node.child1 = taxa1[0]
+    else:  # taxa are undivisible
+        if node == node.parent.child0:
+            node.parent.child0 = taxa_data
+        else:
+            node.parent.child1 = taxa_data
 
 
 def number_nodes(tree: KeyNode, node_number: int) -> int:
@@ -329,8 +338,17 @@ def write_key(tree: KeyNode, output: list) -> None:
         outstr = "    <p>{}. ".format(letter) + "; ".join(var_strs) + ". &mdash; "
         if isinstance(tip, KeyNode):
             outstr += "Go to {}".format(tip.number)
-        else:
+        elif isinstance(tip, Taxon):
             outstr += tip.name
+        elif isinstance(tip, dict):
+            pass
+            taxa_names = sorted_taxa_keys(tip)
+            if len(taxa_names) == 2:
+                outstr += taxa_names[0] + " or " + taxa_names[1]
+            else:
+                outstr += ", ".join(taxa_names[:-1]) + ", or " + taxa_names[len(taxa_names)]
+        else:
+            print("ERROR: Child node of invalid type:", tip)
         return outstr + "</p>\n"
 
     output.append("    <p>{}.</p>\n".format(tree.number))
