@@ -5,9 +5,9 @@ Trait #	Trait	Priority	Variant #	Variant Description	Figures
 2	Carapace color uniformity	1	2.2	Carapace is a mix of multiple colors (including blotches, stripes, or spots)	.
 3	Carapace color	1	3.1	Carapace is predominantly medium-to-dark blue	.
 3	Carapace color	1	3.2	Carapace is predominantly silvery-gray to gray-tan	.
-3	Carapace color	1	3.3	Most of carapace is white-to-cream, with a distinctive purple blotch in the center/front	.
+3	Carapace color	1	3.3	Most of carapace is white-to-cream, with a distinctive purple blotch in the center/front	L_pugilator02.jpg|.
 4	H-groove color	1	4.1	H-groove is same color as the rest of the carapace	.
-4	H-groove color	1	4.2	H-groove is silver-gray	.
+4	H-groove color	1	4.2	H-groove is silver-gray	L_pugilator01.jpg|H-groove is silver-gray.
 4	H-groove color	1	4.3	H-groove is rusty-red	.
-5	Joint color	1	5.1	Limb joints (including claws and walking legs) have distinctive reddish markings	.
+5	Joint color	1	5.1	Limb joints (including claws and walking legs) have distinctive reddish markings	M_minax.jpg|Red markings on joints of claw and limb.
 5	Joint color	1	5.2	Limb joints have no distinctive red markings	.

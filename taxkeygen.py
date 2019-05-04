@@ -120,6 +120,22 @@ class KeyNode:
         return child
 
 
+class TraitFigure:
+    def __init__(self, image: str, caption: str):
+        self.image = image
+        self.caption = caption
+
+
+def extract_figures(x: str) -> list:
+    figs = []
+    if x != ".":
+        fs = x.split("||")
+        for f in fs:
+            fig, cap = f.split("|")
+            figs.append(TraitFigure(fig, cap))
+    return figs
+
+
 def sorted_taxa_keys(tax_dict: dict) -> list:
     return sorted(tax_dict.keys())
 
@@ -154,7 +170,7 @@ def read_trait_data(inname: str) -> dict:
             tv = TraitVariant()
             tv.id = data[3]
             tv.description = data[4]
-            tv.figures = data[5]
+            tv.figures = extract_figures(data[5])
             trait.add_variant(tv)
     return trait_dict
 
@@ -333,9 +349,13 @@ def start_output(output: list, nnodes: int) -> None:
         output.append("      #key-fork-n-{} {{grid-area: {} / fork-number }}\n".format(n+1, n*2 + 1))
         output.append("      #key-fork-a-{} {{grid-area: {} / fork-option }}\n".format(n+1, n*2 + 1))
         output.append("      #key-fork-b-{} {{grid-area: {} / fork-option }}\n".format(n+1, (n+1)*2))
-    output.append("      .key-fork-n {  }\n")
+    output.append("      .key-fork-n { font-weight: bold }\n")
     output.append("      .key-fork-a {  }\n")
     output.append("      .key-fork-b { padding-bottom: 1em }\n")
+    output.append("      .variant-fig { margin: 0.25em; display: inline-block }\n")
+    output.append("      .variant-fig img { height: 200px }\n")
+    output.append("      .variant-fig figcaption { font-style: italic; font-size: 0.75em; text-align: center; "
+                  "margin-top: 0.25em }\n")
     output.append("    </style>\n")
     output.append("  </head>\n")
     output.append("  <body>\n")
@@ -347,6 +367,16 @@ def end_output(output: list) -> None:
     output.append("  </body>\n")
     output.append("</html>\n")
 
+
+def get_var_figs(variants: list) -> str:
+    fig_str = ""
+    for v in variants:
+        for f in v.figures:
+            fig_str += "<figure class=\"variant-fig\"><img src=\"images/{}\" />".format(f.image)
+            if f.caption != ".":
+                fig_str += "<figcaption>{}</figcaption>".format(f.caption)
+            fig_str += "</figure> "
+    return fig_str
 
 def write_key(tree: KeyNode, output: list) -> None:
     # # --- original output code ---
@@ -379,6 +409,7 @@ def write_key(tree: KeyNode, output: list) -> None:
 
     def fork_str(letter: str, variants: list, tip: Union[KeyNode, Taxon], n: int):
         var_strs = [str(v) for v in variants]
+        var_figs = get_var_figs(variants)
         outstr = "    <div id=\"key-fork-{0}-{1}\" class=\"key-fork-{0}\">{0}. ".format(letter, n) + \
                  "; ".join(var_strs) + ". &mdash; "
         if isinstance(tip, KeyNode):
@@ -394,6 +425,8 @@ def write_key(tree: KeyNode, output: list) -> None:
                 outstr += ", ".join(taxa_names[:-1]) + ", or " + taxa_names[len(taxa_names)]
         else:
             print("ERROR: Child node of invalid type:", tip)
+        if var_figs != "":
+            outstr += "<br/>" + var_figs
         return outstr + "</div>\n"
 
     output.append("    <div id=\"key-fork-n-{0}\" class=\"key-fork-n\">"
