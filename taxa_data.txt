@@ -1,4 +1,5 @@
 Species	Front breadth	Carapace color uniformity	Carapace color	H-groove color	Joint color
 minax	1.2	2.1	3.2	4.1	5.1
-pugnax	1.2	2.1	3.1	4.1	5.2
+panacea	1.2	2.2	3.3	4.3	5.2
 pugilator	1.2	2.2	3.3	4.2	5.2
+pugnax	1.2	2.1	3.1	4.1	5.2
