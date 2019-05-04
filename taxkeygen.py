@@ -101,7 +101,6 @@ class VariantDist:
 class KeyNode:
     def __init__(self):
         self.parent = None
-        # self.children = []
         self.child0 = None
         self.child1 = None
         self.child0variants = []
@@ -115,7 +114,6 @@ class KeyNode:
             self.child0 = child
         else:
             self.child1 = child
-        # self.children.append(child)
         child.parent = self
         return child
 
@@ -236,9 +234,6 @@ def reverse_pattern(x: str) -> str:
 
     thus 00011100 -> 11100011
     """
-    # x = x.replace("0", "a")
-    # x = x.replace("1", "0")
-    # return x.replace("a", "1")
     return x.translate(str.maketrans("01", "10"))
 
 
