@@ -317,7 +317,7 @@ def number_nodes(tree: KeyNode, node_number: int) -> int:
         node_number = number_nodes(tree.child0, node_number+1)
     if isinstance(tree.child1, KeyNode):
         node_number = number_nodes(tree.child1, node_number+1)
-    return node_number + 1
+    return node_number
 
 
 def start_output(output: list) -> None:
