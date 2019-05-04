@@ -1,20 +1,36 @@
 <html>
   <head>
     <style>
+      .tree-grid {
+                    display: grid;
+                    grid-template-columns: 4ch 1fr;
+                    grid-template-areas: "fork-number fork-option";
+                 }
+      #key-fork-n-1 {grid-area: 1 / fork-number }
+      #key-fork-a-1 {grid-area: 1 / fork-option }
+      #key-fork-b-1 {grid-area: 2 / fork-option }
+      #key-fork-n-2 {grid-area: 3 / fork-number }
+      #key-fork-a-2 {grid-area: 3 / fork-option }
+      #key-fork-b-2 {grid-area: 4 / fork-option }
+      #key-fork-n-3 {grid-area: 5 / fork-number }
+      #key-fork-a-3 {grid-area: 5 / fork-option }
+      #key-fork-b-3 {grid-area: 6 / fork-option }
+      .key-fork-n {  }
+      .key-fork-a {  }
+      .key-fork-b { padding-bottom: 1em }
     </style>
   </head>
   <body>
-    <p><a name="key-node-1">1.</a></p>
-    <p>a. Carapace is predominantly a solid single color. &mdash; <a href="#key-node-2">Go to 2</a></p>
-    <p>b. Carapace is a mix of multiple colors (including blotches, stripes, or spots). &mdash; <a href="#key-node-3">Go to 3</a></p>
-    <p>&nbsp;</p>
-    <p><a name="key-node-2">2.</a></p>
-    <p>a. Carapace is predominantly medium-to-dark blue; Limb joints have no distinctive red markings. &mdash; pugnax</p>
-    <p>b. Carapace is predominantly silvery-gray to gray-tan; Limb joints (including claws and walking legs) have distinctive reddish markings. &mdash; minax</p>
-    <p>&nbsp;</p>
-    <p><a name="key-node-3">3.</a></p>
-    <p>a. H-groove is silver-gray. &mdash; pugilator</p>
-    <p>b. H-groove is rusty-red. &mdash; panacea</p>
-    <p>&nbsp;</p>
+    <div class="tree-grid">
+    <div id="key-fork-n-1" class="key-fork-n"><a name="key-node-1">1.</a></div>
+    <div id="key-fork-a-1" class="key-fork-a">a. Carapace is predominantly a solid single color. &mdash; <a href="#key-node-2">Go to 2</a></div>
+    <div id="key-fork-b-1" class="key-fork-b">b. Carapace is a mix of multiple colors (including blotches, stripes, or spots). &mdash; <a href="#key-node-3">Go to 3</a></div>
+    <div id="key-fork-n-2" class="key-fork-n"><a name="key-node-2">2.</a></div>
+    <div id="key-fork-a-2" class="key-fork-a">a. Carapace is predominantly medium-to-dark blue; Limb joints have no distinctive red markings. &mdash; pugnax</div>
+    <div id="key-fork-b-2" class="key-fork-b">b. Carapace is predominantly silvery-gray to gray-tan; Limb joints (including claws and walking legs) have distinctive reddish markings. &mdash; minax</div>
+    <div id="key-fork-n-3" class="key-fork-n"><a name="key-node-3">3.</a></div>
+    <div id="key-fork-a-3" class="key-fork-a">a. H-groove is silver-gray. &mdash; pugilator</div>
+    <div id="key-fork-b-3" class="key-fork-b">b. H-groove is rusty-red. &mdash; panacea</div>
+    </div>
   </body>
 </html>

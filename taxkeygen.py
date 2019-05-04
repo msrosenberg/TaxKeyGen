@@ -320,24 +320,67 @@ def number_nodes(tree: KeyNode, node_number: int) -> int:
     return node_number
 
 
-def start_output(output: list) -> None:
+def start_output(output: list, nnodes: int) -> None:
     output.append("<html>\n")
     output.append("  <head>\n")
     output.append("    <style>\n")
+    output.append("      .tree-grid {\n")
+    output.append("                    display: grid;\n")
+    output.append("                    grid-template-columns: 4ch 1fr;\n")
+    output.append("                    grid-template-areas: \"fork-number fork-option\";\n")
+    output.append("                 }\n")
+    for n in range(nnodes):
+        output.append("      #key-fork-n-{} {{grid-area: {} / fork-number }}\n".format(n+1, n*2 + 1))
+        output.append("      #key-fork-a-{} {{grid-area: {} / fork-option }}\n".format(n+1, n*2 + 1))
+        output.append("      #key-fork-b-{} {{grid-area: {} / fork-option }}\n".format(n+1, (n+1)*2))
+    output.append("      .key-fork-n {  }\n")
+    output.append("      .key-fork-a {  }\n")
+    output.append("      .key-fork-b { padding-bottom: 1em }\n")
     output.append("    </style>\n")
     output.append("  </head>\n")
     output.append("  <body>\n")
+    output.append("    <div class=\"tree-grid\">\n")
 
 
 def end_output(output: list) -> None:
+    output.append("    </div>\n")
     output.append("  </body>\n")
     output.append("</html>\n")
 
 
 def write_key(tree: KeyNode, output: list) -> None:
-    def fork_str(letter: str, variants: list, tip: Union[KeyNode, Taxon]):
+    # # --- original output code ---
+    # def fork_str(letter: str, variants: list, tip: Union[KeyNode, Taxon]):
+    #     var_strs = [str(v) for v in variants]
+    #     outstr = "    <p>{}. ".format(letter) + "; ".join(var_strs) + ". &mdash; "
+    #     if isinstance(tip, KeyNode):
+    #         outstr += "<a href=\"#key-node-{0}\">Go to {0}</a>".format(tip.number)
+    #     elif isinstance(tip, Taxon):
+    #         outstr += tip.name
+    #     elif isinstance(tip, dict):
+    #         pass
+    #         taxa_names = sorted_taxa_keys(tip)
+    #         if len(taxa_names) == 2:
+    #             outstr += taxa_names[0] + " or " + taxa_names[1]
+    #         else:
+    #             outstr += ", ".join(taxa_names[:-1]) + ", or " + taxa_names[len(taxa_names)]
+    #     else:
+    #         print("ERROR: Child node of invalid type:", tip)
+    #     return outstr + "</p>\n"
+    #
+    # output.append("    <p><a name=\"key-node-{0}\">{0}.</a></p>\n".format(tree.number))
+    # output.append(fork_str("a", tree.child0variants, tree.child0))
+    # output.append(fork_str("b", tree.child1variants, tree.child1))
+    # output.append("    <p>&nbsp;</p>\n")
+    # if isinstance(tree.child0, KeyNode):
+    #     write_key(tree.child0, output)
+    # if isinstance(tree.child1, KeyNode):
+    #     write_key(tree.child1, output)
+
+    def fork_str(letter: str, variants: list, tip: Union[KeyNode, Taxon], n: int):
         var_strs = [str(v) for v in variants]
-        outstr = "    <p>{}. ".format(letter) + "; ".join(var_strs) + ". &mdash; "
+        outstr = "    <div id=\"key-fork-{0}-{1}\" class=\"key-fork-{0}\">{0}. ".format(letter, n) + \
+                 "; ".join(var_strs) + ". &mdash; "
         if isinstance(tip, KeyNode):
             outstr += "<a href=\"#key-node-{0}\">Go to {0}</a>".format(tip.number)
         elif isinstance(tip, Taxon):
@@ -351,12 +394,12 @@ def write_key(tree: KeyNode, output: list) -> None:
                 outstr += ", ".join(taxa_names[:-1]) + ", or " + taxa_names[len(taxa_names)]
         else:
             print("ERROR: Child node of invalid type:", tip)
-        return outstr + "</p>\n"
+        return outstr + "</div>\n"
 
-    output.append("    <p><a name=\"key-node-{0}\">{0}.</a></p>\n".format(tree.number))
-    output.append(fork_str("a", tree.child0variants, tree.child0))
-    output.append(fork_str("b", tree.child1variants, tree.child1))
-    output.append("    <p>&nbsp;</p>\n")
+    output.append("    <div id=\"key-fork-n-{0}\" class=\"key-fork-n\">"
+                  "<a name=\"key-node-{0}\">{0}.</a></div>\n".format(tree.number))
+    output.append(fork_str("a", tree.child0variants, tree.child0, tree.number))
+    output.append(fork_str("b", tree.child1variants, tree.child1, tree.number))
     if isinstance(tree.child0, KeyNode):
         write_key(tree.child0, output)
     if isinstance(tree.child1, KeyNode):
@@ -374,9 +417,9 @@ def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[s
     match_traits_to_taxa(trait_data, taxa_data)
     key_tree = KeyNode()
     create_key_tree(taxa_data, trait_data, key_tree)
-    number_nodes(key_tree, 1)
+    total_nodes = number_nodes(key_tree, 1)
     output = []
-    start_output(output)
+    start_output(output, total_nodes)
     write_key(key_tree, output)
     end_output(output)
     if out_name is not None:
