@@ -380,34 +380,6 @@ def get_var_figs(variants: list) -> str:
     return fig_str
 
 def write_key(tree: KeyNode, output: list) -> None:
-    # # --- original output code ---
-    # def fork_str(letter: str, variants: list, tip: Union[KeyNode, Taxon]):
-    #     var_strs = [str(v) for v in variants]
-    #     outstr = "    <p>{}. ".format(letter) + "; ".join(var_strs) + ". &mdash; "
-    #     if isinstance(tip, KeyNode):
-    #         outstr += "<a href=\"#key-node-{0}\">Go to {0}</a>".format(tip.number)
-    #     elif isinstance(tip, Taxon):
-    #         outstr += tip.name
-    #     elif isinstance(tip, dict):
-    #         pass
-    #         taxa_names = sorted_taxa_keys(tip)
-    #         if len(taxa_names) == 2:
-    #             outstr += taxa_names[0] + " or " + taxa_names[1]
-    #         else:
-    #             outstr += ", ".join(taxa_names[:-1]) + ", or " + taxa_names[len(taxa_names)]
-    #     else:
-    #         print("ERROR: Child node of invalid type:", tip)
-    #     return outstr + "</p>\n"
-    #
-    # output.append("    <p><a name=\"key-node-{0}\">{0}.</a></p>\n".format(tree.number))
-    # output.append(fork_str("a", tree.child0variants, tree.child0))
-    # output.append(fork_str("b", tree.child1variants, tree.child1))
-    # output.append("    <p>&nbsp;</p>\n")
-    # if isinstance(tree.child0, KeyNode):
-    #     write_key(tree.child0, output)
-    # if isinstance(tree.child1, KeyNode):
-    #     write_key(tree.child1, output)
-
     def fork_str(letter: str, variants: list, tip: Union[KeyNode, Taxon], n: int):
         var_strs = [str(v) for v in variants]
         var_figs = get_var_figs(variants)
