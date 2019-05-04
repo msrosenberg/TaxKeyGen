@@ -236,9 +236,10 @@ def reverse_pattern(x: str) -> str:
 
     thus 00011100 -> 11100011
     """
-    x = x.replace("0", "a")
-    x = x.replace("1", "0")
-    return x.replace("a", "1")
+    # x = x.replace("0", "a")
+    # x = x.replace("1", "0")
+    # return x.replace("a", "1")
+    return x.translate(str.maketrans("01", "10"))
 
 
 def cluster_traits(var_freqs: list) -> list:
