@@ -423,7 +423,7 @@ def write_key(tree: KeyNode, output: list) -> None:
             if len(taxa_names) == 2:
                 outstr += taxa_names[0] + " or " + taxa_names[1]
             else:
-                outstr += ", ".join(taxa_names[:-1]) + ", or " + taxa_names[len(taxa_names)]
+                outstr += ", ".join(taxa_names[:-1]) + ", or " + taxa_names[len(taxa_names)-1]
         else:
             print("ERROR: Child node of invalid type:", tip)
         if var_figs != "":
