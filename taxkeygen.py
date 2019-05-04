@@ -349,7 +349,8 @@ def start_output(output: list, nnodes: int) -> None:
         output.append("      #key-fork-b-{} {{grid-area: {} / fork-option }}\n".format(n+1, (n+1)*2))
     output.append("      .key-fork-n { font-weight: bold }\n")
     output.append("      .key-fork-a { padding-left: 3ch; text-indent: -3ch }\n")
-    output.append("      .key-fork-b { padding-left: 3ch; text-indent: -3ch; padding-bottom: 1em }\n")
+    output.append("      .key-fork-b { padding-left: 3ch; text-indent: -3ch; padding-bottom: 1em; "
+                  "border-bottom: 1px solid silver}\n")
     output.append("      .variant-fig { margin: 0.25em; display: inline-block; text-indent: 0 }\n")
     output.append("      .variant-fig img { height: 200px }\n")
     output.append("      .variant-fig figcaption { font-style: italic; font-size: 0.75em; text-align: center; "
