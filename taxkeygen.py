@@ -10,8 +10,9 @@ class Taxon:
     def find_variant(self, trait):
         t = None
         for c in self.characters:
-            if trait == c.trait:
-                t = c
+            if c is not None:
+                if trait == c.trait:
+                    t = c
         return t
 
 
@@ -180,9 +181,12 @@ def match_traits_to_taxa(trait_data: dict, taxa_data: dict) -> None:
     for t in taxa_data:
         taxon = taxa_data[t]
         for i, c in enumerate(taxon.characters):
-            trait_id, _ = c.split(".")
+            trait_id, v = c.split(".")
             trait = trait_data[trait_id]
-            taxon.characters[i] = trait.variants[c]
+            if v != "?":
+                taxon.characters[i] = trait.variants[c]
+            else:
+                taxon.characters[i] = None
 
 
 def determine_variant_freqs(taxa_data: dict, trait_data: dict) -> list:
@@ -210,7 +214,8 @@ def filter_var_freqs(var_freqs: list) -> list:
     new_freqs = []
     for vf in var_freqs:
         if len(vf) == 2:
-            new_freqs.append(vf)
+            if None not in vf.variants:
+                new_freqs.append(vf)
     return new_freqs
 
 
