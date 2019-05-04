@@ -323,6 +323,8 @@ def number_nodes(tree: KeyNode, node_number: int) -> int:
 def start_output(output: list) -> None:
     output.append("<html>\n")
     output.append("  <head>\n")
+    output.append("    <style>\n")
+    output.append("    </style>\n")
     output.append("  </head>\n")
     output.append("  <body>\n")
 
@@ -337,7 +339,7 @@ def write_key(tree: KeyNode, output: list) -> None:
         var_strs = [str(v) for v in variants]
         outstr = "    <p>{}. ".format(letter) + "; ".join(var_strs) + ". &mdash; "
         if isinstance(tip, KeyNode):
-            outstr += "Go to {}".format(tip.number)
+            outstr += "<a href=\"#key-node-{0}\">Go to {0}</a>".format(tip.number)
         elif isinstance(tip, Taxon):
             outstr += tip.name
         elif isinstance(tip, dict):
@@ -351,7 +353,7 @@ def write_key(tree: KeyNode, output: list) -> None:
             print("ERROR: Child node of invalid type:", tip)
         return outstr + "</p>\n"
 
-    output.append("    <p>{}.</p>\n".format(tree.number))
+    output.append("    <p><a name=\"key-node-{0}\">{0}.</a></p>\n".format(tree.number))
     output.append(fork_str("a", tree.child0variants, tree.child0))
     output.append(fork_str("b", tree.child1variants, tree.child1))
     output.append("    <p>&nbsp;</p>\n")
