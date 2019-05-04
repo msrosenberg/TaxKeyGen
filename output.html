@@ -5,6 +5,7 @@
                     display: grid;
                     grid-template-columns: 4ch 1fr;
                     grid-template-areas: "fork-number fork-option";
+                    grid-row-gap: 10px;
                  }
       #key-fork-n-1 {grid-area: 1 / fork-number }
       #key-fork-a-1 {grid-area: 1 / fork-option }
@@ -16,9 +17,9 @@
       #key-fork-a-3 {grid-area: 5 / fork-option }
       #key-fork-b-3 {grid-area: 6 / fork-option }
       .key-fork-n { font-weight: bold }
-      .key-fork-a {  }
-      .key-fork-b { padding-bottom: 1em }
-      .variant-fig { margin: 0.25em; display: inline-block }
+      .key-fork-a { padding-left: 3ch; text-indent: -3ch }
+      .key-fork-b { padding-left: 3ch; text-indent: -3ch; padding-bottom: 1em }
+      .variant-fig { margin: 0.25em; display: inline-block; text-indent: 0 }
       .variant-fig img { height: 200px }
       .variant-fig figcaption { font-style: italic; font-size: 0.75em; text-align: center; margin-top: 0.25em }
     </style>
