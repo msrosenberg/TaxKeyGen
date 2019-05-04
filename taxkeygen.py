@@ -316,6 +316,7 @@ def create_key_tree(taxa_data: dict, trait_data: dict, node: KeyNode):
             node.parent.child0 = taxa_data
         else:
             node.parent.child1 = taxa_data
+        print("Warning. Undivisable group: " + ", ".join(sorted_taxa_keys(taxa_data)))
 
 
 def number_nodes(tree: KeyNode, node_number: int) -> int:
@@ -374,6 +375,7 @@ def get_var_figs(variants: list) -> str:
                 fig_str += "<figcaption>{}</figcaption>".format(f.caption)
             fig_str += "</figure> "
     return fig_str
+
 
 def write_key(tree: KeyNode, output: list) -> None:
     def fork_str(letter: str, variants: list, tip: Union[KeyNode, Taxon], n: int):
