@@ -183,7 +183,7 @@ def match_traits_to_taxa(trait_data: dict, taxa_data: dict) -> None:
         for i, c in enumerate(taxon.characters):
             trait_id, v = c.split(".")
             trait = trait_data[trait_id]
-            if v != "?":
+            if v != "?" and v != "-":
                 taxon.characters[i] = trait.variants[c]
             else:
                 taxon.characters[i] = None
