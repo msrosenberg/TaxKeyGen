@@ -39,6 +39,8 @@ class Trait:
         self.variants = {}
         self.priority = 1
         self.id = 0
+        self.notes = ""
+        self.figures = []
 
     def __len__(self):
         return len(self.variants)
@@ -158,20 +160,32 @@ def read_trait_data(inname: str) -> dict:
         full_file = infile.readlines()
         for line in full_file[1:]:
             data = line.strip().split("\t")
-            if data[0] in trait_dict:
-                trait = trait_dict[data[0]]
-            else:
-                trait = Trait()
-                trait_dict[data[0]] = trait
-                trait.id = data[0]
-                trait.title = data[1]
-                trait.priority = int(data[2])
-            tv = TraitVariant()
-            tv.id = data[3]
-            tv.description = data[4]
-            tv.figures = extract_figures(data[5])
-            trait.add_variant(tv)
+            trait = Trait()
+            trait_dict[data[0]] = trait
+            trait.id = data[0]
+            trait.title = data[1]
+            trait.priority = int(data[2])
+            if data[3] != ".":
+                trait.notes = data[3]
+            trait.figures = extract_figures(data[4])
     return trait_dict
+
+
+def read_variant_data(inname: str, traits: dict) -> int:
+    cnt = 0
+    with open(inname, "r") as infile:
+        full_file = infile.readlines()
+        for line in full_file[1:]:
+            data = line.strip().split("\t")
+            n, _ = data[0].split(".")
+            trait = traits[n]
+            tv = TraitVariant()
+            tv.id = data[0]
+            tv.description = data[1]
+            tv.figures = extract_figures(data[2])
+            trait.add_variant(tv)
+            cnt += 1
+    return cnt
 
 
 def match_traits_to_taxa(trait_data: dict, taxa_data: dict) -> None:
@@ -416,14 +430,19 @@ def write_key(tree: KeyNode, output: list) -> None:
         write_key(tree.child1, output)
 
 
-def generate_taxonomic_key(trait_name: str, taxa_name: str, out_name: Optional[str], verbose: bool = True) -> list:
+def generate_taxonomic_key(trait_name: str, var_name: str, taxa_name: str, out_name: Optional[str],
+                           verbose: bool = True) -> list:
     trait_data = read_trait_data(trait_name)
     if verbose:
         print()
         print("Read {} traits from {}".format(len(trait_data), trait_name))
+    nv = read_variant_data(var_name, trait_data)
+    if verbose:
+        print("Read {} trait variants from {}".format(nv, var_name))
     taxa_data = read_taxa_data(taxa_name)
     if verbose:
         print("Read {} taxa from {}".format(len(taxa_data), taxa_name))
+        print()
     match_traits_to_taxa(trait_data, taxa_data)
     key_tree = KeyNode()
     create_key_tree(taxa_data, trait_data, key_tree)
@@ -451,9 +470,10 @@ def input_query(query: str, default: str) -> str:
 
 def main():
     trait_file = input_query("Trait data file", "trait_data.txt")
+    trait_var_file = input_query("Trait variant data file", "variant_data.txt")
     taxa_file = input_query("Taxa data file", "taxa_data.txt")
     output_file = input_query("Output HTML file", "output.html")
-    generate_taxonomic_key(trait_file, taxa_file, output_file)
+    generate_taxonomic_key(trait_file, trait_var_file, taxa_file, output_file)
 
 
 if __name__ == "__main__":
