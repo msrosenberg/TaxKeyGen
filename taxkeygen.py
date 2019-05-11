@@ -397,8 +397,11 @@ def get_var_figs(variants: list) -> str:
     return fig_str
 
 
-def write_key(tree: KeyNode, output: list) -> None:
+def write_key(tree: KeyNode, output: list, footnotes: set, append_footnotes: bool = False) -> None:
     def fork_str(letter: str, variants: list, tip: Union[KeyNode, Taxon], n: int):
+        for v in variants:
+            if v.trait.notes != "":
+                footnotes.add(v.trait)
         var_strs = [str(v) for v in variants]
         var_figs = get_var_figs(variants)
         outstr = "    <div id=\"key-fork-{0}-{1}\" class=\"key-fork-{0}\">{0}. ".format(letter, n) + \
@@ -408,7 +411,6 @@ def write_key(tree: KeyNode, output: list) -> None:
         elif isinstance(tip, Taxon):
             outstr += tip.name
         elif isinstance(tip, dict):
-            pass
             taxa_names = sorted_taxa_keys(tip)
             if len(taxa_names) == 2:
                 outstr += taxa_names[0] + " or " + taxa_names[1]
@@ -425,9 +427,13 @@ def write_key(tree: KeyNode, output: list) -> None:
     output.append(fork_str("a", tree.child0variants, tree.child0, tree.number))
     output.append(fork_str("b", tree.child1variants, tree.child1, tree.number))
     if isinstance(tree.child0, KeyNode):
-        write_key(tree.child0, output)
+        write_key(tree.child0, output, footnotes)
     if isinstance(tree.child1, KeyNode):
-        write_key(tree.child1, output)
+        write_key(tree.child1, output, footnotes)
+    if append_footnotes:
+        output.append("    </div>\n")
+        output.append("    <div>\n")
+        output.append("Footnotes:\n")
 
 
 def generate_taxonomic_key(trait_name: str, var_name: str, taxa_name: str, out_name: Optional[str],
@@ -449,7 +455,7 @@ def generate_taxonomic_key(trait_name: str, var_name: str, taxa_name: str, out_n
     total_nodes = number_nodes(key_tree, 1)
     output = []
     start_output(output, total_nodes)
-    write_key(key_tree, output)
+    write_key(key_tree, output, set(), append_footnotes=True)
     end_output(output)
     if out_name is not None:
         with open(out_name, "w") as outfile:
