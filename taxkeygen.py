@@ -375,6 +375,7 @@ def start_output(output: list, nnodes: int) -> None:
     output.append("      .variant-fig img { height: 200px }\n")
     output.append("      .variant-fig figcaption { font-style: italic; font-size: 0.75em; text-align: center; "
                   "margin-top: 0.25em }\n")
+    output.append("      #key_footnotes li { padding-bottom: 1em }\n")
     output.append("    </style>\n")
     output.append("  </head>\n")
     output.append("  <body>\n")
@@ -448,7 +449,7 @@ def write_key(tree: KeyNode, output: list, footnotes: set, append_footnotes: boo
         for f in fkeys:
             fn = fdict[f]
             output.append("        <li>\n")
-            output.append("          <a name=\"fn{}\">{}\n".format(fn.fnumber, fn.notes))
+            output.append("          <a name=\"fn{}\">{}</a>\n".format(fn.fnumber, fn.notes))
             if len(fn.figures) > 0:
                 fig_str = ""
                 for fig in fn.figures:
@@ -458,7 +459,7 @@ def write_key(tree: KeyNode, output: list, footnotes: set, append_footnotes: boo
                     fig_str += "</figure> "
                 output.append("          <br/>\n")
                 output.append("          " + fig_str + "\n")
-            output.append("        </a></li>\n")
+            output.append("        </li>\n")
         output.append("      </ol>\n")
 
 
