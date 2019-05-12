@@ -1,7 +1,7 @@
 Trait #	Trait	Priority	Notes	Figures
-1	Front breadth	10	.	.
+1	Front breadth	10	Front Breadth: Test test test and more test.	3.5.jpg|White carapace
 2	Carapace color uniformity	1	.	.
-3	Carapace color	1	Test	.
+3	Carapace color	1	Carapace Color: This is just a test to see if the system is working. Something about carapace color. Blah blah blah blah blah.	11.1a.jpg|Major claw on male is predominantly a single color||11.1b.jpg|Major claw on male is predominantly a single color
 4	H-groove color	1	.	.
 5	Joint color	1	.	.
 6	Shear-shaped claw	6	.	.
@@ -9,12 +9,12 @@ Trait #	Trait	Priority	Notes	Figures
 8	Eyestalk color	1	.	.
 9	Claw symmetry	100	.	.
 10	Carapace breadth	1	.	.
-11	Claw color uniformity	1	Test	.
+11	Claw color uniformity	1	Claw Color: Perhaps another test will be useful.	.
 12	Claw color (uniform)	1	.	.
 13	Major pollex pitting	1	.	.
 14	Major dactyl color	1	.	.
 15	Major pollex color	1	.	.
-16	Major claw outer manus color	1	.	.
+16	Major claw outer manus color	1	Outer Manus Color: Let's try yet another test.	.
 17	Major claw outer manus tubercles	1	.	.
 18	Walking leg color	1	.	.
 19	Tip of dactyl shape	1	.	.
