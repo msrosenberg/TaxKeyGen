@@ -41,6 +41,7 @@ class Trait:
         self.id = 0
         self.notes = ""
         self.figures = []
+        self.fnumber = None
 
     def __len__(self):
         return len(self.variants)
@@ -399,10 +400,17 @@ def get_var_figs(variants: list) -> str:
 
 def write_key(tree: KeyNode, output: list, footnotes: set, append_footnotes: bool = False) -> None:
     def fork_str(letter: str, variants: list, tip: Union[KeyNode, Taxon], n: int):
+        var_strs = []
         for v in variants:
             if v.trait.notes != "":
-                footnotes.add(v.trait)
-        var_strs = [str(v) for v in variants]
+                if v.trait not in footnotes:
+                    footnotes.add(v.trait)
+                    v.trait.fnumber = len(footnotes)
+                fn_str = " [<a href=\"#fn{0}\">footnote {0}</a>]".format(v.trait.fnumber)
+            else:
+                fn_str = ""
+            var_strs.append(str(v) + fn_str)
+        # var_strs = [str(v) for v in variants]
         var_figs = get_var_figs(variants)
         outstr = "    <div id=\"key-fork-{0}-{1}\" class=\"key-fork-{0}\">{0}. ".format(letter, n) + \
                  "; ".join(var_strs) + ". &mdash; "
@@ -430,10 +438,28 @@ def write_key(tree: KeyNode, output: list, footnotes: set, append_footnotes: boo
         write_key(tree.child0, output, footnotes)
     if isinstance(tree.child1, KeyNode):
         write_key(tree.child1, output, footnotes)
-    if append_footnotes:
+    if append_footnotes and (len(footnotes) > 0):
         output.append("    </div>\n")
         output.append("    <div>\n")
-        output.append("Footnotes:\n")
+        output.append("      <h2>Footnotes</h2>\n")
+        fdict = {f.fnumber: f for f in footnotes}
+        fkeys = sorted(fdict.keys())
+        output.append("      <ol id=\"key_footnotes\">\n")
+        for f in fkeys:
+            fn = fdict[f]
+            output.append("        <li>\n")
+            output.append("          <a name=\"fn{}\">{}\n".format(fn.fnumber, fn.notes))
+            if len(fn.figures) > 0:
+                fig_str = ""
+                for fig in fn.figures:
+                    fig_str += "<figure class=\"variant-fig\"><img src=\"images/{}\" />".format(fig.image)
+                    if fig.caption != ".":
+                        fig_str += "<figcaption>{}</figcaption>".format(fig.caption)
+                    fig_str += "</figure> "
+                output.append("          <br/>\n")
+                output.append("          " + fig_str + "\n")
+            output.append("        </a></li>\n")
+        output.append("      </ol>\n")
 
 
 def generate_taxonomic_key(trait_name: str, var_name: str, taxa_name: str, out_name: Optional[str],
