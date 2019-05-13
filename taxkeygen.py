@@ -426,7 +426,7 @@ def write_key(tree: KeyNode, output: list, footnotes: set, append_footnotes: boo
             var_strs.append(str(v) + fn_str)
         var_figs = get_var_figs(variants)
         outstr = "    <div id=\"key-fork-{0}-{1}\" class=\"key-fork-{0}\">{0}. ".format(letter, n) + \
-                 "; ".join(var_strs) + ". &mdash; "
+                 ". ".join(var_strs) + ". &mdash; "
         if isinstance(tip, KeyNode):
             outstr += "<a href=\"#key-node-{0}\">Go to {0}</a>".format(tip.number)
         elif isinstance(tip, Taxon):
