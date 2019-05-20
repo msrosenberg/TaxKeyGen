@@ -1,5 +1,10 @@
+"""
+Taxonomic Key Generator
+
+"""
 
 from typing import Optional, Tuple, Union
+from collections import Counter
 
 
 class Taxon:
@@ -55,7 +60,7 @@ class VariantDist:
     def __init__(self):
         self.trait = None
         self.variants = set()
-        self.vfreq = {}
+        self.vfreq = Counter()
         self.pattern = ""
         self.cluster = None
 
@@ -72,10 +77,7 @@ class VariantDist:
 
     def add_variant(self, variant):
         self.variants.add(variant)
-        if variant in self.vfreq:
-            self.vfreq[variant] += 1
-        else:
-            self.vfreq[variant] = 1
+        self.vfreq.update([variant])
 
     def add_to_cluster(self, cluster):
         cluster.append(self)
