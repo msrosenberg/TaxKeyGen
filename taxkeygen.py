@@ -410,10 +410,11 @@ def start_output(output: list, nnodes: int) -> None:
     output.append("      .key-fork-a { padding-left: 3ch; text-indent: -3ch }\n")
     output.append("      .key-fork-b { padding-left: 3ch; text-indent: -3ch; padding-bottom: 1em; "
                   "border-bottom: 1px solid silver}\n")
-    output.append("      .variant-fig { margin: 0.25em; display: inline-block; text-indent: 0 }\n")
+    output.append("      .variant-fig { margin: 0.25em; display: inline-block; text-indent: 0; text-align: center; "
+                  "vertical-align: text-top}\n")
     output.append("      .variant-fig img { height: 200px }\n")
-    output.append("      .variant-fig figcaption { font-style: italic; font-size: 0.75em; text-align: center; "
-                  "margin-top: 0.25em }\n")
+    output.append("      .variant-fig figcaption { font-style: italic; font-size: 0.75em; margin-top: 0.25em; "
+                  "margin-left: auto; margin-right: auto; max-width: 250px }\n")
     output.append("      #key_footnotes li { padding-bottom: 1em }\n")
     output.append("      .tkg_title { font-style: italic }\n")
     output.append("      .key_intro { padding-bottom: 2em; font-size: 0.75em }\n")
