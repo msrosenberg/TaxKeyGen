@@ -1,5 +1,10 @@
+"""
+Taxonomic Key Generator
+
+"""
 
 from typing import Optional, Tuple, Union
+from collections import Counter
 
 
 class Taxon:
@@ -55,7 +60,7 @@ class VariantDist:
     def __init__(self):
         self.trait = None
         self.variants = set()
-        self.vfreq = {}
+        self.vfreq = Counter()
         self.pattern = ""
         self.cluster = None
 
@@ -72,10 +77,7 @@ class VariantDist:
 
     def add_variant(self, variant):
         self.variants.add(variant)
-        if variant in self.vfreq:
-            self.vfreq[variant] += 1
-        else:
-            self.vfreq[variant] = 1
+        self.vfreq.update([variant])
 
     def add_to_cluster(self, cluster):
         cluster.append(self)
@@ -126,6 +128,15 @@ class TraitFigure:
     def __init__(self, image: str, caption: str):
         self.image = image
         self.caption = caption
+
+
+class GenericNote:
+    def __init__(self):
+        self.id = 0
+        self.title = ""
+        self.notes = ""
+        self.figures = []
+        self.fnumber = None
 
 
 def extract_figures(x: str) -> list:
@@ -187,6 +198,21 @@ def read_variant_data(inname: str, traits: dict) -> int:
             trait.add_variant(tv)
             cnt += 1
     return cnt
+
+
+def read_generic_notes(inname: str) -> dict:
+    gnotes = {}
+    with open(inname, "r") as infile:
+        full_file = infile.readlines()
+        for line in full_file[1:]:
+            data = line.strip().split("\t")
+            note = GenericNote()
+            note.id = data[0]
+            note.title = data[1]
+            note.notes = data[2]
+            note.figures = extract_figures(data[3])
+            gnotes[note.id] = note
+    return gnotes
 
 
 def match_traits_to_taxa(trait_data: dict, taxa_data: dict) -> None:
@@ -475,7 +501,7 @@ def write_key(tree: KeyNode, output: list, footnotes: set, append_footnotes: boo
         output.append("      </ol>\n")
 
 
-def generate_taxonomic_key(trait_name: str, var_name: str, taxa_name: str, out_name: Optional[str],
+def generate_taxonomic_key(trait_name: str, var_name: str, generic_name: str, taxa_name: str, out_name: Optional[str],
                            verbose: bool = True) -> list:
     trait_data = read_trait_data(trait_name)
     if verbose:
@@ -484,6 +510,9 @@ def generate_taxonomic_key(trait_name: str, var_name: str, taxa_name: str, out_n
     nv = read_variant_data(var_name, trait_data)
     if verbose:
         print("Read {} trait variants from {}".format(nv, var_name))
+    generic_notes = read_generic_notes(generic_name)
+    if verbose:
+        print("Read {} generic notes from {}".format(len(generic_notes), generic_name))
     taxa_data = read_taxa_data(taxa_name)
     if verbose:
         print("Read {} taxa from {}".format(len(taxa_data), taxa_name))
@@ -516,9 +545,10 @@ def input_query(query: str, default: str) -> str:
 def main():
     trait_file = input_query("Trait data file", "trait_data.txt")
     trait_var_file = input_query("Trait variant data file", "variant_data.txt")
+    generic_file = input_query("Generic notes file", "generic_notes.txt")
     taxa_file = input_query("Taxa data file", "taxa_data.txt")
     output_file = input_query("Output HTML file", "output.html")
-    generate_taxonomic_key(trait_file, trait_var_file, taxa_file, output_file)
+    generate_taxonomic_key(trait_file, trait_var_file, generic_file, taxa_file, output_file)
 
 
 if __name__ == "__main__":
