@@ -47,6 +47,7 @@ class Trait:
         self.notes = ""
         self.figures = []
         self.fnumber = None
+        self.generic_notes = []
 
     def __len__(self):
         return len(self.variants)
@@ -180,6 +181,8 @@ def read_trait_data(inname: str) -> dict:
             if data[3] != ".":
                 trait.notes = data[3]
             trait.figures = extract_figures(data[4])
+            if data[5] != ".":
+                trait.generic_notes = data[5].split(",")
     return trait_dict
 
 
@@ -228,6 +231,16 @@ def match_traits_to_taxa(trait_data: dict, taxa_data: dict) -> None:
                 taxon.characters[i] = trait.variants[c]
             else:
                 taxon.characters[i] = None
+
+
+def match_generic_notes_to_traits(trait_data: dict, generic_notes: dict) -> None:
+    """
+    add generic notes to associated traits
+    """
+    for t in trait_data:
+        trait = trait_data[t]
+        for i, n in enumerate(trait.generic_notes):
+            trait.generic_notes[i] = generic_notes[n]
 
 
 def determine_variant_freqs(taxa_data: dict, trait_data: dict) -> list:
@@ -442,11 +455,20 @@ def write_key(tree: KeyNode, output: list, footnotes: set, append_footnotes: boo
         """
         var_strs = []
         for v in variants:
+            fn_list = []
+            for gn in v.trait.generic_notes:
+                if gn not in footnotes:
+                    footnotes.add(gn)
+                    gn.fnumber = len(footnotes)
+                fn_list.append("<a href=\"#fn{0}\">footnote {0}</a>".format(gn.fnumber))
             if v.trait.notes != "":
                 if v.trait not in footnotes:
                     footnotes.add(v.trait)
                     v.trait.fnumber = len(footnotes)
-                fn_str = " [<a href=\"#fn{0}\">footnote {0}</a>]".format(v.trait.fnumber)
+                fn_list.append("<a href=\"#fn{0}\">footnote {0}</a>".format(v.trait.fnumber))
+                # fn_str = " [<a href=\"#fn{0}\">footnote {0}</a>]".format(v.trait.fnumber)
+            if len(fn_list) > 0:
+                fn_str = " [" + ", ".join(fn_list) + "]"
             else:
                 fn_str = ""
             var_strs.append(str(v) + fn_str)
@@ -518,6 +540,7 @@ def generate_taxonomic_key(trait_name: str, var_name: str, generic_name: str, ta
         print("Read {} taxa from {}".format(len(taxa_data), taxa_name))
         print()
     match_traits_to_taxa(trait_data, taxa_data)
+    match_generic_notes_to_traits(trait_data, generic_notes)
     key_tree = KeyNode()
     create_key_tree(taxa_data, trait_data, key_tree)
     total_nodes = number_nodes(key_tree, 1)
