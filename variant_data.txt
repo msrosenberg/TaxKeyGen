@@ -12,8 +12,8 @@ Variant #	Variant Description	Figures
 3.6	Carapace is predominantly red	3.6.jpg|Red carapace
 3.7	Carapace is predominantly black	.
 3.8	Carapace is medium-to-dark brown	.
-3.9	Carapace is a mix of blue and black blotches (usually more blue than black, but not always)	.
-3.10	Carapace is a mix of black and white blotches	.
+3.9	Carapace is a mix of blue and black blotches (usually more blue than black, but not always)	3.9a.jpg|Carapace is a mix of blue and black and blotches (more black than blue)||3.9b.jpg|Carapace is a mix of blue and black and blotches (more blue than black)
+3.10	Carapace is a mix of black and white blotches	3.10.jpg|Carapace is a mix of black and white blotches
 4.1	H-groove is same color as (or not distinct from) the rest of the carapace	4.1.jpg|H-groove is similar color to carapace
 4.2	H-groove is silver-gray	4.2a.jpg|H-groove is silver-gray||4.2b.jpg|H-groove is silver-gray
 4.3	H-groove is rusty-red	4.3a.jpg|H-groove is rusty-red||4.3b.jpg|H-groove is rusty-red
@@ -43,24 +43,24 @@ Variant #	Variant Description	Figures
 12.3	Entire major claw-color is pale blue	12.3.jpg|Entire major claw color is pale blue
 13.1	Major pollex lacks conspicuous pits on outside surface	.
 13.2	Major pollex has conpspicuous pits on outside surface (can be hard to see in field)	13.2.jpg|Conspicuous pits on outside surface of major pollex
-14.1	Major dactyl (movable finger) predominantly white	.
-14.2	Major dactyl (movable finger) pale pink-to-white, often with a darker red edge at the top	.
+14.1	Major dactyl (movable finger) predominantly white	14.1.jpg|Major dactyl is predominantly white
+14.2	Major dactyl (movable finger) pale pink-to-white, often with a darker red edge at the top	14.2.jpg|Major dactyl is pale pink-to-white
 15.1	Major pollex is predominantly orange	.
 15.2	Major pollex is predominantly dark red-reddish purple, sometimes with a white tip	.
 15.3	Major pollex is predominantly orange, sometimes with a white tip	.
-15.4	Major pollex is predominantly pale pink-to-white	.
-15.5	Major pollex is predominantly white	.
+15.4	Major pollex is predominantly pale pink-to-white	15.4.jpg|Major pollex is predominantly pale pink-to-white
+15.5	Major pollex is predominantly white	15.5.jpg|Major pollex is predominantly white
 16.1	The outer manus (not including the pollex) of the major claw is predominantly orange-orange/red	.
 16.2	The outer manus (not including the pollex) of the major claw is predominantly purple-red	.
 16.3	The outer manus (not including the pollex) of the major claw is predominantly orange	.
 16.4	The outer manus (not including the pollex) of the major claw is predominantly  a pale, off-white with a touch of brown or red	.
 16.5	The outer manus (not including the pollex) of the major claw is pink to red, often with darker red on the outer margins	.
 16.6	The outer manus (not including the pollex) of the major claw is predominantly  yellow-to-orange	.
-16.7	The outer manus (not including the pollex) of the major claw is predominantly pink	.
+16.7	The outer manus (not including the pollex) of the major claw is predominantly pink	16.7.jpg|Outer manus of major claw is pink
 17.1	The outer manus (not including the pollex) of the major claw is covered with large tubercles (bumps)	.
 17.2	The outer manus (not including the pollex) of the major claw does not have large tubercles (bumps)	.
 18.1	Walking legs are predominantly red	.
 18.2	Walking legs are predominantly blue	.
 18.3	Walking legs are predominantly a mix of black and white	.
 19.1	Tip of dactyl comes to a normal point	.
-19.2	Tip of dactyl has a concave tooth with points at either end	.
+19.2	Tip of dactyl has a crescent-shaped tooth	19.2.jpg|Crescent-shaped tooth on tip of dactyl
